@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>2025 Memories</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Comic Sans MS', Arial, sans-serif;
+    background: url('images/room.png') center/cover no-repeat;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Back arrow */
+#back {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 2rem;
+    color: white;
+    cursor: pointer;
+    z-index: 20;
+    text-shadow: 0 0 5px black;
+}
+
+/* Light button */
+#light-btn {
+    position: absolute;
+    bottom: 50px;
+    left: 50px;
+    width: 50px;
+    height: 50px;
+    background: yellow;
+    border-radius: 50%;
+    box-shadow: 0 0 15px yellow;
+    cursor: pointer;
+    animation: glow 1.5s infinite alternate;
+    z-index: 5;
+}
+
+@keyframes glow {
+    0% { box-shadow: 0 0 10px yellow; }
+    100% { box-shadow: 0 0 25px yellow; }
+}
+
+/* Corkboard */
+#corkboard {
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    width: 750px;
+    height: 550px;
+    background: repeating-linear-gradient(
+        45deg,
+        #c19a6b,
+        #c19a6b 5px,
+        #b28a55 5px,
+        #b28a55 10px
+    );
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+    border: 4px solid #8b5e3c;
+    padding: 20px;
+    display: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 15px;
+    border-radius: 10px;
+    z-index: 10;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    opacity: 0;
+}
+
+/* Push pin */
+.cork-photo::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: red;
+    border-radius: 50%;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Polaroid */
+.cork-photo {
+    width: 150px;
+    height: 120px;
+    position: relative;
+    cursor: pointer;
+    border: 3px solid #fff;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    transform: rotate(calc(-5deg + 10deg * var(--rand)));
+}
+
+.cork-photo span {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    font-size: 0.8rem;
+    color: pink;
+    text-shadow: 0 0 3px white;
+}
+
+/* Overlay */
+#overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index: 15;
+}
+#overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    border: 3px solid white;
+}
+#overlay span {
+    position:absolute;
+    top:20px;
+    right:40px;
+    font-size:2rem;
+    color:#fff;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div id="back">&#8592; Back</div>
+<div id="light-btn"></div>
+
+<!-- 🎵 Cozy Music -->
+<audio id="bg-music" loop>
+    <source src="audio/cozy.mp3" type="audio/mpeg">
+</audio>
+
+<div id="corkboard">
+    <div class="cork-photo" style="--rand:0;"><img src="images/photo1.jpg" width="150" height="120"><span>Love 💖</span></div>
+    <div class="cork-photo" style="--rand:1;"><img src="images/photo2.jpg" width="150" height="120"><span>Cute 🐱</span></div>
+    <div class="cork-photo" style="--rand:0.5;"><img src="images/photo3.jpg" width="150" height="120"><span>Happy 😊</span></div>
+    <div class="cork-photo" style="--rand:0.2;"><img src="images/photo4.jpg" width="150" height="120"><span>Joy 🌸</span></div>
+    <div class="cork-photo" style="--rand:-0.3;"><img src="images/photo5.jpg" width="150" height="120"><span>Fun 🎉</span></div>
+    <div class="cork-photo" style="--rand:0.7;"><img src="images/photo6.jpg" width="150" height="120"><span>Sweet 🍬</span></div>
+    <div class="cork-photo" style="--rand:0.2;"><img src="images/photo7.jpg" width="150" height="120"><span>Cool</span></div>
+    <div class="cork-photo" style="--rand:-0.3;"><img src="images/photo8.jpg" width="150" height="120"><span>Witty</span></div>
+    
+</div>
+
+<div id="overlay">
+    <span id="close">&times;</span>
+    <img src="" id="overlay-img">
+</div>
+
+<script>
+const music = document.getElementById('bg-music');
+let musicStarted = false;
+
+// Back
+document.getElementById('back').onclick = () => {
+    window.location.href = 'index.php';
+};
+
+// Light button
+const lightBtn = document.getElementById('light-btn');
+const corkboard = document.getElementById('corkboard');
+let corkVisible = false;
+
+lightBtn.onclick = () => {
+
+    // Start music on first interaction
+    if (!musicStarted) {
+        music.volume = 0.4;
+        music.play().catch(()=>{});
+        musicStarted = true;
+    }
+
+    corkVisible = !corkVisible;
+
+    if (corkVisible) {
+        music.pause(); // ⛔ pause when cork opens
+        corkboard.style.display = 'flex';
+        setTimeout(()=>{
+            corkboard.style.transform = 'translateX(-50%) scale(1)';
+            corkboard.style.opacity = '1';
+        }, 30);
+    } else {
+        corkboard.style.transform = 'translateX(-50%) scale(0)';
+        corkboard.style.opacity = '0';
+        setTimeout(()=>{ corkboard.style.display = 'none'; }, 500);
+        music.play().catch(()=>{}); // ▶ resume when closed
+    }
+};
+
+// Photo overlay
+const overlay = document.getElementById('overlay');
+const overlayImg = document.getElementById('overlay-img');
+
+document.querySelectorAll('.cork-photo img').forEach(img=>{
+    img.onclick = () => {
+        overlayImg.src = img.src;
+        overlay.style.display = 'flex';
+    };
+});
+
+document.getElementById('close').onclick = () => overlay.style.display = 'none';
+overlay.onclick = e => { if(e.target === overlay) overlay.style.display = 'none'; };
+</script>
+
+</body>
+</html>
